@@ -1,0 +1,12 @@
+{
+  "name": "D01D Engine",
+  "short_name": "D01D Engine",
+  "description": "Offline neon drag-and-drop puzzle game.",
+  "start_url": "./D10D_ENGINE_COMING_SOON2.HTML",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#020308",
+  "theme_color": "#00fff2",
+  "orientation": "any",
+  "icons": []
+}
