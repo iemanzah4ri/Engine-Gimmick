@@ -373,6 +373,7 @@
   <div id="header">
     <h1>D01D ENGINE</h1>
     <p>DRAG ALL 4 MODULES INTO THE CORE GRID</p>
+    <h6>by Hafsam & ieman</h6>
   </div>
   <div id="hint">TAP &amp; HOLD EACH FRAGMENT · RELEASE OVER MATCHING SLOT</div>
   <button class="neon-btn" id="restartBtn">⟲ RESTART</button>
@@ -399,7 +400,9 @@
     <span class="tag">04</span>
   </div>
 
+  
   <div id="progress">MODULES LOCKED: <span id="count">0</span> / 4</div>
+  
 </div>
 
 <div id="overlay">
@@ -431,6 +434,16 @@
     let bgDuckTimeout = null;
     let lockedCount = 0;
     let lastLaser = 0;
+
+    function enterFullscreen() {
+      if (document.fullscreenElement) return;
+
+      const fullscreenRequest = document.documentElement.requestFullscreen ||
+        document.documentElement.webkitRequestFullscreen;
+      if (fullscreenRequest) {
+        Promise.resolve(fullscreenRequest.call(document.documentElement)).catch(() => {});
+      }
+    }
 
     function getCtx() {
       if (!audioCtx) {
@@ -481,7 +494,7 @@
 
       const ctx = getCtx();
       musicGain = ctx.createGain();
-      musicGain.gain.value = 0.045;
+      musicGain.gain.value = 1;
       musicGain.connect(ctx.destination);
 
       const notes = [174.61, 207.65, 233.08, 261.63, 233.08, 207.65];
@@ -564,7 +577,7 @@
           const ctx = getCtx();
           musicGain.gain.cancelScheduledValues(ctx.currentTime);
           musicGain.gain.setValueAtTime(musicGain.gain.value, ctx.currentTime);
-          musicGain.gain.linearRampToValueAtTime(0.045, ctx.currentTime + 0.4);
+          musicGain.gain.linearRampToValueAtTime(0.09, ctx.currentTime + 0.4);
         } catch (error) {
           // Ignore audio reset errors.
         }
@@ -638,6 +651,8 @@
       return cx >= slotRectEl.left - margin && cx <= slotRectEl.right + margin &&
         cy >= slotRectEl.top - margin && cy <= slotRectEl.bottom + margin;
     }
+
+    stage.addEventListener('pointerdown', enterFullscreen, { once: true });
 
     pieces.forEach(piece => {
       let dragging = false;
