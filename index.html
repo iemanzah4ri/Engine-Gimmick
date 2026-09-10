@@ -488,6 +488,46 @@
       playTone({ type: 120, end: 1200, duration: 1.0, gainValue: 0.22, wave: 'sine' });
     }
 
+    function playExplosion() {
+      try {
+        const ctx = getCtx();
+        const start = ctx.currentTime;
+        const duration = 10;
+        const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate);
+        const noiseData = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < noiseData.length; i += 1) {
+          noiseData[i] = (Math.random() * 2 - 1) * (1 - i / noiseData.length);
+        }
+
+        const noise = ctx.createBufferSource();
+        const noiseFilter = ctx.createBiquadFilter();
+        const noiseGain = ctx.createGain();
+        noise.buffer = noiseBuffer;
+        noiseFilter.type = 'lowpass';
+        noiseFilter.frequency.setValueAtTime(900, start);
+        noiseFilter.frequency.exponentialRampToValueAtTime(90, start + duration);
+        noiseGain.gain.setValueAtTime(0.0001, start);
+        noiseGain.gain.exponentialRampToValueAtTime(2.5, start + 0.02);
+        noiseGain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        noise.connect(noiseFilter).connect(noiseGain).connect(ctx.destination);
+        noise.start(start);
+
+        const boom = ctx.createOscillator();
+        const boomGain = ctx.createGain();
+        boom.type = 'sine';
+        boom.frequency.setValueAtTime(140, start);
+        boom.frequency.exponentialRampToValueAtTime(28, start + duration);
+        boomGain.gain.setValueAtTime(0.0001, start);
+        boomGain.gain.exponentialRampToValueAtTime(2.5, start + 0.02);
+        boomGain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        boom.connect(boomGain).connect(ctx.destination);
+        boom.start(start);
+        boom.stop(start + duration);
+      } catch (error) {
+        // Audio is optional.
+      }
+    }
+
     function startBackgroundMusic() {
       if (musicStarted) return;
       musicStarted = true;
@@ -605,6 +645,7 @@
     }
 
     function triggerMerge() {
+      playExplosion();
       playPowerUp();
       dropzone.style.transition = 'opacity 0.5s';
       dropzone.style.opacity = '0';
