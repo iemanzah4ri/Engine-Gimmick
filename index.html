@@ -693,7 +693,7 @@
         cy >= slotRectEl.top - margin && cy <= slotRectEl.bottom + margin;
     }
 
-    stage.addEventListener('pointerdown', enterFullscreen, { once: true });
+    stage.addEventListener('click', enterFullscreen, { once: true });
 
     pieces.forEach(piece => {
       let dragging = false;
